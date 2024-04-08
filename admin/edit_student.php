@@ -1,0 +1,150 @@
+<?
+require_once 'includes/header.php';
+
+if ($_POST['status'] == 'update') {
+    if (empty($_FILES['image']['name'])) {
+        // Update details without changing the photo
+        $con->query("UPDATE `students` SET `status` = '" . $_POST['mystatus'] . "',`dur_start` = '" . $_POST['dur_start'] . "',`dur_ends` = '" . $_POST['dur_ends'] . "',`name` = '" . $_POST['name'] . "', `gender` = '" . $_POST['gender'] . "', `father` = '" . $_POST['father'] . "', `mother` = '" . $_POST['mother'] . "', `dob` = '" . $_POST['dob'] . "', `mobile` = '" . $_POST['mobile'] . "', `email` = '" . $_POST['email'] . "', `state` = '" . $_POST['state'] . "', `distric` = '" . $_POST['distric'] . "', `exam_pass` = '" . $_POST['exam_pass'] . "', `marks` = '" . $_POST['marks'] . "', `board` = '" . $_POST['board'] . "', `year` = '" . $_POST['year'] . "', `username` = '" . $_POST['username'] . "', `password` = '" . $_POST['password'] . "', `course_id` = '" . $_POST['course_id'] . "' WHERE `students`.`id` = '" . $_GET['id'] . "'");
+        echo '<script>alert("Details are updated successfully.");location.href="edit_student.php?id=' . $_GET['id'] . '"</script>';
+    } else {
+        // Update details and change the photo
+        $img = photo_upload('image', 'students');
+        // $signImg = photo_upload('sign', 'students');
+        $signImg = ['status' => true,'file_name' => ''];
+
+        if ($img['status'] && $signImg['status']) {
+            $con->query("UPDATE `students` SET `status` = '" . $_POST['mystatus'] . "',`dur_start` = '" . $_POST['dur_start'] . "',`dur_ends` = '" . $_POST['dur_ends'] . "',`name` = '" . $_POST['name'] . "', `gender` = '" . $_POST['gender'] . "', `father` = '" . $_POST['father'] . "', `mother` = '" . $_POST['mother'] . "', `dob` = '" . $_POST['dob'] . "', `mobile` = '" . $_POST['mobile'] . "', `email` = '" . $_POST['email'] . "', `state` = '" . $_POST['state'] . "', `distric` = '" . $_POST['distric'] . "', `exam_pass` = '" . $_POST['exam_pass'] . "', `marks` = '" . $_POST['marks'] . "', `board` = '" . $_POST['board'] . "', `year` = '" . $_POST['year'] . "', `username` = '" . $_POST['username'] . "', `password` = '" . $_POST['password'] . "', `course_id` = '" . $_POST['course_id'] . "', `photo` = '" . $img['file_name'] . "' WHERE `students`.`id` = '" . $_GET['id'] . "'");
+       
+            if (file_exists("../uploads/students/" . $_POST['file'])) {
+                unlink("../uploads/students/" . $_POST['file']);
+            }
+            echo '<script>alert("Details are updated successfully.");location.href="edit_student.php?id=' . $_GET['id'] . '"</script>';
+        } else {
+            echo '<script>alert("Error in photo uploading. Image Status: ' . $img['status'] . ', Sign Status: ' . $signImg['status'] . '");location.href="edit_student.php?id=' . $_GET['id'] . '"</script>';
+        }
+    }
+}
+
+$get = $con->query("SELECT * FROM students where id = '" . $_GET['id'] . "'")->fetch_assoc();
+?>
+<div class="box box-primary">
+	<div class="box-header"><h3>Edit Students</h3></div>
+	<div class="box-body">
+		<form action="" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="file" value="<?=$get['photo']?>">
+			<div class="form-group col-xs-12 col-md-12 col-lg-12">
+				<label>Enrollment No.</label>
+				<input type="text" class="form-control" value="<?=$get['enrollment_no']?>" >
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Name</label>
+				<input type="text" class="form-control" name="name" value="<?=$get['name']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Gender</label><br>
+			<label>Male <input type="radio" name="gender" value="male" required="" <? if($get['gender']=='male'){echo 'checked';} ?>></label>
+				<label>Female <input type="radio" name="gender" value="female" required="" <? if($get['gender']=='female'){echo 'checked';} ?>></label>
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Father's Name</label>
+				<input type="text" class="form-control" name="father" value="<?=$get['father']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Mother's Name</label>
+				<input type="text" class="form-control" name="mother" value="<?=$get['mother']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Date of birth</label>
+				<input type="date" class="form-control" name="dob" value="<?=$get['dob']?>">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Mobile No.</label>
+				<input type="text" class="form-control" name="mobile" value="<?=$get['mobile']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Email ID</label>
+				<input type="email" class="form-control" name="email" value="<?=$get['email']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>State</label>
+				<input type="text" class="form-control" name="state" value="<?=$get['state']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Distric</label>
+				<input type="text" class="form-control" name="distric" value="<?=$get['distric']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Exam Pass</label>
+				<input type="text" class="form-control" name="exam_pass" value="<?=$get['exam_pass']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Marks</label>
+				<input type="number" class="form-control" name="marks" value="<?=$get['marks']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Board</label>
+				<input type="text" class="form-control" name="board" value="<?=$get['board']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Year</label>
+				<input type="number" class="form-control" name="year" value="<?=$get['year']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Username</label>
+				<input type="text" class="form-control" name="username" value="<?=$get['username']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Password</label>
+				<input type="text" class="form-control" name="password" value="<?=$get['password']?>" required="">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Select Course</label>
+				<select class="form-control" name="course_id" required="">
+					<option value="">--Select--</option>
+					<?
+						$course = $con->query("SELECT * FROM courses");
+						while($c = $course->fetch_assoc())
+						{
+							$se = $c['id']==$get['course_id']?"selected":"";
+							echo '<option value="'.$c['id'].'" '.$se.'>'.ucwords($c['course_name']).'</option>';
+						}
+					?>
+				</select>
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Session Start</label>
+				<input type="date" name="dur_start" class="form-control" required value="<?=$get['dur_start']?>">
+			</div>
+				<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Session Ends</label>
+				<input type="date" name="dur_ends" class="form-control" required value="<?=$get['dur_ends']?>">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Photo</label>
+				<input type="file" class="form-control" name="image" >
+			</div>
+			<!--<div class="form-group col-xs-12 col-md-12 col-lg-12">-->
+   <!--             <label>Sign Image</label>-->
+   <!--             <input type="file" class="form-control" name="sign">-->
+   <!--         </div>-->
+
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+			    <!--<img src="../uploads/students/< ?=$get['sign']?>" style="width: 100px;height: 120px;border: 1px solid black">-->
+				<img src="../uploads/students/<?=$get['photo']?>" style="width: 100px;height: 120px;border: 1px solid black">
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-4">
+				<label>Status</label>
+				<select  class="form-control" name="mystatus" >
+				    <option value="1" <?=$get['status']?'selected':'';?>>Active</option>
+				    <option value="0" <?=$get['status']?'':'selected';?>>De-active</option>
+				</select>
+			</div>
+			<div class="form-group col-xs-12 col-md-12 col-lg-12">
+				<button class="btn btn-primary" type="submit" name="status" value="update"><i class="fa fa-save"></i> Submit</button>
+			</div>
+		</form>
+	</div>
+</div>
+<?
+include 'includes/footer.php';
+?>

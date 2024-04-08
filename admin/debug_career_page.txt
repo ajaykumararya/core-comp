@@ -1,0 +1,16 @@
+Array
+(
+    [status] => career_page
+    [job] => osdkl
+    [fname] => lsd
+    [lname] => sdk
+    [qualification] => s
+    [email] => k
+    [contact] => k
+    [experience] => k
+    [dob] => 2024-01-03
+    [psalary] => 5
+    [esalary] => 55
+    [cemp] => 5
+    [address] => 5
+)
